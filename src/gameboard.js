@@ -17,7 +17,7 @@ export default class Gameboard
 
         if(coord[0] < 0 || coord[1] < 0)
         {
-            return 'invalid starting position';
+            return false;
         }
 
         if(alignment == 'horizontal')
@@ -26,14 +26,14 @@ export default class Gameboard
             Yend = coord[1];
             if(Xend >= this.size)
             {
-                return 'Invalid horizontal position';
+                return false;
             }
 
             for(let x = coord[0]; x <= Xend; x++)
             {
                 if(this.board[x][Yend] !== null)
                 {
-                    return 'Position occupied';
+                    return false;
                 }
             }
             
@@ -48,14 +48,14 @@ export default class Gameboard
             Yend = coord[1] + (shipSize - 1);
             if(Yend >= this.size)
             {
-                return 'Invalid vertical position';
+                return false;
             }
 
             for(let y = coord[1]; y <= Yend; y++)
             {
                 if(this.board[Xend][y] !== null)
                 {
-                    return 'Position occupied';
+                    return false;
                 }
             }
 
@@ -64,7 +64,7 @@ export default class Gameboard
                 this.board[Xend][y] = shipID;
             }
         }
-        return 'Ship placed successfully';
+        return true;
     }
 
     receiveAttack(coord)

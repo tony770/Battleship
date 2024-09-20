@@ -1,10 +1,11 @@
-export default class ship 
+export default class Ship 
 {
-    constructor(length) 
+    constructor(name, length, alignment) 
     {
+        this.name = name;
         this.length = length;
+        this.alignment = alignment;
         this.hits = 0;
-        this.sunk = false;
     }
     
     hit()
@@ -14,12 +15,7 @@ export default class ship
 
     isSunk()
     {
-        if(this.hits >= this.length)
-        {
-            this.sunk = true;
-        }
-
-        return this.sunk;
+        return this.hits >= this.length;
     }
 }
 
