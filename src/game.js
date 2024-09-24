@@ -2,7 +2,7 @@ import Gameboard from "./gameboard";
 import Ship from "./ship";
 import Player from "./player";
 
-function initializeGame()
+export function initializeGame()
 {
     const playerBoard = new Gameboard();
     const computerBoard = new Gameboard();
