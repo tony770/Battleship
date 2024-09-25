@@ -4,8 +4,34 @@ body {
     min-height: 100vh;
 }
 
-.player1Board {
-    width: 400px;
-    height: 400px;
-    background-color: gray;
+.mainContainer {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
 }
+
+.player1Container, .player2Container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.player1Board, .player2Board {
+    width: 600px;
+    height: 600px;
+    background-color: lightgray;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.player1Board div, .player2Board div {
+    width: 58px;
+    height: 58px;
+    background-color: rgb(135, 211, 222);
+    border: 1px solid black;
+}
+
