@@ -1,24 +1,45 @@
 import Gameboard from "./gameboard";
 import Ship from "./ship";
 import Player from "./player";
+import { displayShipsOnScreen, changeGameInfo } from "./ui";
 
-export function initializeGame()
+const p2Tiles = document.querySelectorAll('.p2tile');
+let currentPlayer = 'Player';
+
+function initializeGame()
 {
     const playerBoard = new Gameboard();
     const computerBoard = new Gameboard();
 
-    const player = new Player('Person', playerBoard);
-    const computer = new Player('computer', computerBoard);
+    const realPlayer = new Player('Person', playerBoard);
+    const computer = new Player('Computer', computerBoard);
 
     //place real player ships (preset positions)
     const playerPresets = getPresetShips();
     playerPresets.forEach(({ ship, startPosition }) => {
-        player.gameboard.placeShip(ship, startPosition, ship.alignment);
+        realPlayer.gameboard.placeShip(ship, startPosition, ship.alignment);
     })
 
     //place computer ships (random positions)
     defaultShipPresets.forEach(preset => {
         placeRandomShip(preset.name, preset.size, computer.gameboard);
+    })
+
+    //display player ships
+    const playerShips = realPlayer.gameboard.getAllShipCoordinates();
+    displayShipsOnScreen('real', playerShips);
+
+    //display computer ships (hidden)
+    const computerShips = computer.gameboard.getAllShipCoordinates();
+    displayShipsOnScreen('computer', computerShips);
+
+    const p2Tiles = document.querySelectorAll('.p2tile');
+    p2Tiles.forEach(tile => {
+        tile.addEventListener('click', () => {
+            const tileCoord = tile.id.slice(-2);
+            const [x, y] = [tileCoord[0], tileCoord[1]];
+            Attack(computer.gameboard, [x, y], tile)
+        })
     })
 }
 
@@ -39,11 +60,11 @@ function getPresetShips()
         },
         {
             ship: new Ship('Submarine', 3, 'vertical'),
-            startPosition: [7, 2]
+            startPosition: [6, 1]
         },
         {
             ship: new Ship('Destroyer', 2, 'horizontal'),
-            startPosition: [9, 8]
+            startPosition: [8, 8]
         }
     ]
 }
@@ -78,3 +99,37 @@ const defaultShipPresets = [
     { name: 'Submarine', size: 3 },
     { name: 'Destroyer', size: 2 },
 ];
+
+function Attack(gameboard, coord, tile)
+{
+    const hitConfirm = gameboard.receiveAttack(coord);
+    if(hitConfirm == 'Miss')
+    {
+        tile.classList.add('miss');
+    }
+    else if(hitConfirm == 'Hit')
+    {
+        checkWin(gameboard);
+        tile.classList.add('hit');
+    }
+    switchTurn();
+}
+
+function switchTurn()
+{
+    currentPlayer = (currentPlayer == 'Player') ? 'Computer' : 'Player';
+    changeGameInfo(currentPlayer, "'s Turn");
+}
+
+function checkWin(gameboard) {
+    const gameover = gameboard.areAllShipsSunk();
+
+    if(gameover)
+    {
+        console.log('gameover');
+        changeGameInfo(currentPlayer, 'Wins');
+    }
+}
+
+
+export { initializeGame, Attack };

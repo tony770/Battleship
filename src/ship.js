@@ -5,6 +5,7 @@ export default class Ship
         this.name = name;
         this.length = length;
         this.alignment = alignment;
+        this.coordinates = [];
         this.hits = 0;
     }
     

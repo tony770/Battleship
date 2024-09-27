@@ -39,6 +39,7 @@ export default class Gameboard
             
             for(let x = coord[0]; x <= Xend; x++)
             {
+                ship.coordinates.push([x, Yend]);
                 this.board[x][Yend] = shipID;
             }
         }
@@ -61,6 +62,7 @@ export default class Gameboard
 
             for(let y = coord[1]; y <= Yend; y++)
             {
+                ship.coordinates.push([Xend, y]);
                 this.board[Xend][y] = shipID;
             }
         }
@@ -94,5 +96,16 @@ export default class Gameboard
     areAllShipsSunk()
     {
         return this.ships.every(ship => ship.isSunk());
+    }
+
+    getAllShipCoordinates() {
+        const shipCoordinates = [];
+        this.ships.forEach(ship => {
+            shipCoordinates.push({
+                name: ship.name,
+                coordinates: ship.coordinates
+            });
+        });
+        return shipCoordinates;
     }
 }
