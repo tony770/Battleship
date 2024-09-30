@@ -3,11 +3,13 @@ import Ship from "./ship";
 import Player from "./player";
 import { displayShipsOnScreen, changeGameInfo } from "./ui";
 
-const p2Tiles = document.querySelectorAll('.p2tile');
 let currentPlayer = 'Player';
+let gameInProgress = false;
 
 function initializeGame()
 {
+    gameInProgress = true;
+    changeGameInfo('Game in progress!!')
     const playerBoard = new Gameboard();
     const computerBoard = new Gameboard();
 
@@ -38,7 +40,7 @@ function initializeGame()
         tile.addEventListener('click', () => {
             const tileCoord = tile.id.slice(-2);
             const [x, y] = [tileCoord[0], tileCoord[1]];
-            Attack(computer.gameboard, [x, y], tile)
+            playerAttack(realPlayer.gameboard, computer.gameboard, [x, y], tile)
         })
     })
 }
@@ -100,36 +102,104 @@ const defaultShipPresets = [
     { name: 'Destroyer', size: 2 },
 ];
 
-function Attack(gameboard, coord, tile)
+function playerAttack(playerGameboard, computerGameboard, coord, tile)
 {
-    const hitConfirm = gameboard.receiveAttack(coord);
+    if (!gameInProgress) return;
+
+    const hitConfirm = computerGameboard.receiveAttack(coord);
     if(hitConfirm == 'Miss')
     {
         tile.classList.add('miss');
     }
     else if(hitConfirm == 'Hit')
     {
-        checkWin(gameboard);
         tile.classList.add('hit');
+        if(checkWin(computerGameboard))
+        {
+            gameInProgress = false;
+            return;
+        }
+    }
+    setTimeout(() => {
+        computerAttack(playerGameboard);
+    }, 1000);
+    switchTurn();
+    return;
+}
+
+function computerAttack(gameboard)
+{
+    if (!gameInProgress) return;
+
+    let [x, y] = getRandomValidCoord(gameboard);
+    const tile = document.getElementById('p1' + x + y)
+    const hitConfirm = gameboard.receiveAttack([x, y]);
+    if(hitConfirm == 'Miss')
+    {
+        tile.classList.add('miss')
+    }
+    else if(hitConfirm == 'Hit')
+    {
+        tile.classList.add('hit');
+        if(checkWin(gameboard))
+        {
+            gameInProgress = false;
+            return;
+        }
     }
     switchTurn();
+    return;
+}
+
+function getRandomValidCoord(gameboard)
+{
+    let x, y;
+    do{
+        x = Math.floor(Math.random() * 10);
+        y = Math.floor(Math.random() * 10);
+    } while(gameboard.isAlreadyAttacked([x, y]));
+
+    return [x, y]
 }
 
 function switchTurn()
 {
     currentPlayer = (currentPlayer == 'Player') ? 'Computer' : 'Player';
-    changeGameInfo(currentPlayer, "'s Turn");
+    changeGameInfo(currentPlayer + ", it's your turn!!");
+    if (currentPlayer == 'Player') {
+        enableComputerBoard(); // Enable clicks on the computer's board for the player
+    } else {
+        disableComputerBoard(); // Disable clicks on the computer's board during its turn
+    }
 }
 
 function checkWin(gameboard) {
     const gameover = gameboard.areAllShipsSunk();
+    console.log('Game over status:', gameover);
 
     if(gameover)
     {
-        console.log('gameover');
-        changeGameInfo(currentPlayer, 'Wins');
+        changeGameInfo(currentPlayer + ' Wins');
+        disableComputerBoard();
+        return true;
     }
+    return false;
+}
+
+function disableComputerBoard()
+{
+    const p2Tiles = document.querySelectorAll('.p2tile')
+    p2Tiles.forEach(tile => {
+        tile.style.pointerEvents = 'none';
+    })
+}
+
+function enableComputerBoard() {
+    const p2Tiles = document.querySelectorAll('.p2tile');
+    p2Tiles.forEach(tile => {
+        tile.style.pointerEvents = 'auto'; // Enable click events
+    });
 }
 
 
-export { initializeGame, Attack };
+export { initializeGame };

@@ -37,9 +37,9 @@ function displayShipsOnScreen(player, shipCoordinates)
     })
 }
 
-function changeGameInfo(player, text)
+function changeGameInfo(text)
 {
-    gameInfo.textContent = player + text;
+    gameInfo.textContent = text;
 }
 
 

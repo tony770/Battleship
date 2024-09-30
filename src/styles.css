@@ -50,7 +50,7 @@ body {
 }
 
 .player2Board .ship {
-    background-color: purple;
+    background-color: ;
 }
 
 .player1Board .hit, .player2Board .hit {
@@ -66,4 +66,9 @@ body {
     height: 58px;
     background-color: rgb(135, 211, 222);
     border: 1px solid black;
+}
+
+.gameInfo {
+    font-size: 20px;
+    color: black;
 }

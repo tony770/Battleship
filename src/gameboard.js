@@ -93,6 +93,16 @@ export default class Gameboard
         return 'Hit';
     }
 
+    isAlreadyAttacked(coord)
+    {
+        const target = this.board[coord[0]][coord[1]];
+        if(target == 'hit' || target == 'miss')
+        {
+            return true;
+        }
+        return false
+    }
+
     areAllShipsSunk()
     {
         return this.ships.every(ship => ship.isSunk());
