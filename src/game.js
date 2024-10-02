@@ -74,9 +74,9 @@ function getPresetShips()
 function placeRandomShip(name, length, gameboard)
 {
     const newShip = new Ship(name, length, Math.random() < 0.5 ? 'horizontal' : 'vertical');
-    const maxAttempts = 100;
+    let placed = false;
 
-    for(let attempts = 0; attempts < maxAttempts; attempts++)
+    while(!placed)
     {
         const [x, y] = getRandomCoordinate(gameboard.size);
         if(gameboard.placeShip(newShip, [x, y], newShip.alignment))

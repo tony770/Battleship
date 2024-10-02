@@ -24,7 +24,7 @@ export default class Gameboard
         {
             Xend = coord[0] + (shipSize - 1);
             Yend = coord[1];
-            if(Xend >= this.size)
+            if(Xend >= this.size || !this.isAreaFree(coord[0], coord[1], shipSize, 'horizontal'))
             {
                 return false;
             }
@@ -47,7 +47,7 @@ export default class Gameboard
         {
             Xend = coord[0];
             Yend = coord[1] + (shipSize - 1);
-            if(Yend >= this.size)
+            if(Yend >= this.size || !this.isAreaFree(coord[0], coord[1], shipSize, 'vertical'))
             {
                 return false;
             }
@@ -64,6 +64,29 @@ export default class Gameboard
             {
                 ship.coordinates.push([Xend, y]);
                 this.board[Xend][y] = shipID;
+            }
+        }
+        return true;
+    }
+
+    isAreaFree(x, y, length, orientation) {
+        let startX = x - 1; // Start one cell before the ship
+        let endX = x + (orientation === 'horizontal' ? length : 1); // End one cell after the ship
+        let startY = y - 1; // Start one cell above the ship
+        let endY = y + (orientation === 'vertical' ? length : 1); // End one cell below the ship
+    
+        // Make sure we don't go out of bounds
+        startX = Math.max(0, startX);
+        endX = Math.min(this.size - 1, endX);
+        startY = Math.max(0, startY);
+        endY = Math.min(this.size - 1, endY);
+    
+        // Check the area around the ship's intended position
+        for (let i = startX; i <= endX; i++) {
+            for (let j = startY; j <= endY; j++) {
+                if (this.board[i][j] !== null) {
+                    return false; // Adjacent ship detected
+                }
             }
         }
         return true;

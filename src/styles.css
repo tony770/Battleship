@@ -50,7 +50,7 @@ body {
 }
 
 .player2Board .ship {
-    background-color: ;
+    background-color: purple;
 }
 
 .player1Board .hit, .player2Board .hit {
