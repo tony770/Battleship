@@ -49,10 +49,6 @@ body {
     background-color: rgb(225, 225, 103);
 }
 
-.player2Board .ship {
-    background-color: purple;
-}
-
 .player1Board .hit, .player2Board .hit {
     background-color: red;
 }

@@ -127,16 +127,35 @@ function playerAttack(playerGameboard, computerGameboard, coord, tile)
     return;
 }
 
+let computerState = {
+    state: 'hunt',
+    lastHit: null,
+    validCells: []
+}
+
 function computerAttack(gameboard)
 {
     if (!gameInProgress) return;
 
-    let [x, y] = getRandomValidCoord(gameboard);
+    let [x, y] = [0, 0];
+    if(computerState.state == 'hunt')
+    {
+        [x, y] = aiHunt(gameboard);
+    }
+    else if (computerState.state = 'target')
+    {
+        [x, y] = aiTarget();
+    }
     const tile = document.getElementById('p1' + x + y)
     const hitConfirm = gameboard.receiveAttack([x, y]);
+
     if(hitConfirm == 'Miss')
     {
-        tile.classList.add('miss')
+        tile.classList.add('miss');
+        if(computerState.state == 'target' && computerState.validCells.length == 0)
+        {
+            computerState.state = 'hunt';
+        }
     }
     else if(hitConfirm == 'Hit')
     {
@@ -146,9 +165,39 @@ function computerAttack(gameboard)
             gameInProgress = false;
             return;
         }
+        computerState.state = 'target';
+        computerState.lastHit = [x, y];
+        computerState.validCells = getAdjacentCells(x, y, gameboard);
     }
     switchTurn();
     return;
+}
+
+function aiHunt(gameboard)
+{
+    let [x, y] = getRandomValidCoord(gameboard);
+    return [x, y];
+}
+
+function aiTarget()
+{
+    return computerState.validCells.shift();
+}
+
+function getAdjacentCells(x, y, gameboard)
+{
+    const adjacent = [];
+
+    if(x > 0 && !gameboard.isAlreadyAttacked([x - 1, y])) 
+        adjacent.push([x - 1, y]);
+    if(x < gameboard.size - 1 && !gameboard.isAlreadyAttacked([x + 1, y]))
+        adjacent.push([x + 1, y]);
+    if(y > 0 && !gameboard.isAlreadyAttacked([x, y - 1]))
+        adjacent.push([x, y - 1]);
+    if(y < gameboard.size - 1 && !gameboard.isAlreadyAttacked([x, y + 1]))
+        adjacent.push([x, y + 1]);
+
+    return adjacent;
 }
 
 function getRandomValidCoord(gameboard)
